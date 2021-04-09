@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class VoteToPerson(models.Models):
+class VoteToPerson(models.Model):
     number_of_votes = models.IntegerField(default=0)
 
 
