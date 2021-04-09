@@ -1,8 +1,13 @@
 from django.db import models
 
 
-class VoteToPerson(models.Model):
-    number_of_votes = models.IntegerField(default=0)
+class Person(models.Model):
+    surname = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
+    middle_name = models.CharField(max_length=20)
+    photo = models.TextField(default=r'mysite\voting\static\voting\IMG')  # - пропиши тут значение по умолчанию - путь к какой нибудь картинке
+    age = models.IntegerField()
+    short_biography = models.TextField()
 
 
 class Vote(models.Model):
@@ -13,20 +18,13 @@ class Vote(models.Model):
     number_of_votes_for_win = models.IntegerField(default=None)
     is_active = models.BooleanField(default=True)
     winner = models.CharField(max_length=20)
-    vote_to_person = models.ForeignKey(VoteToPerson, on_delete=models.CASCADE)
+    person = models.ManyToManyField(Person, through='VoteToPerson')
 
 
-class Person(models.Model):
-    surname = models.CharField(max_length=20)
-    name = models.CharField(max_length=20)
-    middle_name = models.CharField(max_length=20)
-    photo = models.TextField()                   # - пропиши тут значение по умолчанию - путь к какой нибудь картинке
-    age = models.IntegerField()
-    short_biography = models.TextField()
-    vote_to_person = models.ForeignKey(VoteToPerson, on_delete=models.CASCADE)
-
-
-
+class VoteToPerson(models.Model):
+    number_of_votes = models.IntegerField(default=0)
+    vote = models.ForeignKey(Vote, default=0, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, default=0, on_delete=models.CASCADE)
 
 
 
