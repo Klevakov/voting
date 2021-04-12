@@ -20,7 +20,7 @@ class Vote(models.Model):
     start_date = models.DateField(auto_now=False, auto_now_add=False, default=timezone.now())
     end_date = models.DateField(auto_now=False, auto_now_add=False, default=timezone.now() + timezone.timedelta(days=3))
     number_of_votes_for_win = models.IntegerField(default=None)
-    winner = models.CharField(max_length=40, default='Победитель пока не определен. Голосование продолжается.')
+    winner = models.CharField(max_length=60, default='Победитель пока не определен. Голосование продолжается.')
     person = models.ManyToManyField(Person, through='VoteToPerson')
 
     def __str__(self):
