@@ -1,0 +1,12 @@
+<h1>{{ vote.voting_name }}</h1>
+<h2>{{ vote.voting_description }}</h2>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'voting:voice' vote.id %}" method="post">
+{% csrf_token %}
+{% for person in person_list %}
+    <input type="radio" name="person" id="person{{ forloop.counter }}" value="{{ person.id }}">
+    <label for="person{{ forloop.counter }}">{{ person }}</label><br>
+{% endfor %}
+<input type="submit" value="Проголосовать!">
+</form>

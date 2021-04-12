@@ -1,0 +1,15 @@
+{% load static %}
+<h1 class="heading">Ниже представлен список голосований</h1>
+
+<link rel="stylesheet" type="text/css" href="{% static 'voting/style.css' %}">
+
+
+{% if latest_votes_list %}
+    <ulnamr>
+    {% for vote in latest_votes_list %}
+        <li><a href="{% url 'voting:detail' vote.id %}">{{ vote.voting_name }}</a></li>
+    {% endfor %}
+    </ulnamr>
+{% else %}
+    <p>Голосование недоступно.</p>
+{% endif %}
