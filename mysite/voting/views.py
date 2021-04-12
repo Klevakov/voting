@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import loader
@@ -102,10 +103,10 @@ def voice(request, vote_id):
     my_vote = get_object_or_404(Vote, pk=vote_id)
     try:
         # selected_person = my_vote.person_set.get(pk=request.POST['person'])
-        selected_person = my_vote.vote_to_person.get(person=request.POST['person'])
-
+        # selected_person = my_vote.vote_to_person.get(person=request.POST['person'])
+        person_id = request.POST['person']
         # selected_person = my_vote.person.get(pk=request.POST['person'])
-    except (KeyError, VoteToPerson.DoesNotExist):
+    except (KeyError, Person.DoesNotExist):
         my_person_list = my_vote.person.all()
         context = {
             'vote': my_vote,
@@ -115,8 +116,22 @@ def voice(request, vote_id):
         return render(request, 'voting/detail.html', context)
     else:
         # selected_person.votes += 1
-        selected_person.number_of_votes = F('number_of_votes') + 1
-        # selected_person.update(votes=F('votes') + 1)
-        selected_person.save()
-        selected_person.refresh_from_db()
+        # selected_person = my_vote.vote_to_person.select_for_update(of=('self')).filter(person=request.POST['person'])
+        # with transaction.atomic():
+        #     for person in selected_person:
+        #         person.number_of_votes = F('number_of_votes') + 1
+        #         person.save()
+        #         person.refresh_from_db()
+        selected_vote = my_vote.vote_to_person.select_for_update().filter(vote=my_vote.id)
+        with transaction.atomic():
+            selected_person = selected_vote.get(person=person_id)
+            selected_person.number_of_votes = F('number_of_votes') + 1
+            selected_person.save()
+            selected_person.refresh_from_db()
+
+
+
+        # selected_person.number_of_votes = F('number_of_votes') + 1
+        # selected_person.save()
+        # selected_person.refresh_from_db()
         return HttpResponseRedirect(reverse('voting:results', args=(my_vote.id,)))
