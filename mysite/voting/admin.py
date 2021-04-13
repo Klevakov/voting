@@ -33,7 +33,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 class VoteToPersonAdmin(admin.ModelAdmin):
-    fields = ['vote', 'person']
+    fields = ['vote', 'person', 'moment_of_last_voice', 'number_of_votes']
     list_display = ('vote', 'person', 'number_of_votes')
 
 
