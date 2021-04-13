@@ -9,7 +9,7 @@ from .models import Person, Vote
 
 
 def index(request):
-    latest_votes_list = Vote.objects.order_by('-id')[:3]
+    latest_votes_list = Vote.objects.order_by('-id')[:10]
     context = {
         'latest_votes_list': latest_votes_list,
     }
@@ -19,14 +19,17 @@ def index(request):
 def detail(request, vote_id):
     my_vote = get_object_or_404(Vote, pk=vote_id)
     if my_vote.start_date < date.today() <= my_vote.end_date:
-        my_person_list = my_vote.person.all()
-        context = {
-            'vote': my_vote,
-            'person_list': my_person_list,
-        }
-        return render(request, 'voting/detail.html', context)
+        if my_vote.winner == 'Победитель пока не определен. Голосование продолжается.':
+            my_person_list = my_vote.person.all()
+            context = {
+                'vote': my_vote,
+                'person_list': my_person_list,
+            }
+            return render(request, 'voting/detail.html', context)
+        else:
+            return HttpResponseRedirect(reverse('voting:results', args=(my_vote.id,)))
     else:
-        return HttpResponse("Голосование закрыто")
+        return determine_the_winner(vote=my_vote)
 
 
 def results(request, vote_id):
@@ -62,8 +65,36 @@ def voice(request, vote_id):
                 selected_person.save()
                 selected_person.refresh_from_db()
                 if my_vote.number_of_votes_for_win is not None:
-                    if selected_person.number_of_votes >= my_vote.number_of_votes_for_win:
-                        my_vote.winner = 'Победитель - ' + str(Person.objects.get(pk=person_id))
-                        my_vote.save()
+
+                    determine_the_winner(vote=my_vote, person=selected_person)
 
         return HttpResponseRedirect(reverse('voting:results', args=(my_vote.id,)))
+
+
+def determine_the_winner(vote: Vote, person: Person = None) -> None:
+    """Функция подсчитывает победителя и записывает результат в БД"""
+
+    if person is not None:
+        if person.number_of_votes == vote.number_of_votes_for_win:
+            vote.winner = 'Голосование завершено досрочно. Победитель - ' + str(person.person)
+            vote.save()
+            vote.refresh_from_db()
+    else:
+        if vote.winner == 'Победитель пока не определен. Голосование продолжается.':
+            selected_vote = vote.vote_to_person.filter(vote=vote.id)
+            max_score = 0
+            for selected_person in selected_vote:
+                if selected_person.number_of_votes > max_score:
+                    max_score = selected_person.number_of_votes
+                    winner = selected_person.person
+            vote.winner = 'Период голосования закончился. Победитель - ' + str(winner)
+            vote.save()
+            vote.refresh_from_db()
+
+
+            # selected_vote = vote.vote_to_person.filter(vote=vote.id)
+            # selected_person = selected_vote.get(max(selected_vote.number_of_votes))
+            # vote.winner = 'Победитель - ' + str(Person.objects.get(pk=selected_person.person))
+            # vote.save()
+            # vote.refresh_from_db()
+    return HttpResponseRedirect(reverse('voting:results', args=(vote.id,)))
