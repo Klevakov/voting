@@ -1,10 +1,23 @@
-<h1>{{ vote.voting_name }}</h1>
+{% extends 'voting/layout.html' %}
 
-<ul>
-{% for person in person_list %}
-    <li>{{ person.person }} -- {{ person.number_of_votes }} vote{{ person.number_of_votes|pluralize }}</li>
-{% endfor %}
-</ul>
-<h2>{{ winner }}</h2>
+{% block title %}Результаты голосования:{{ vote.voting_name }}{% endblock %}
 
-<a href="{% url 'voting:detail' vote.id %}">Проголосовать еще раз?</a>
+{% block content %}
+    <div class="features">
+        <h1>{{ vote.voting_name }}</h1>
+        <h2>Результаты голосования</h2>
+        <ul>
+        {% for person in person_list %}
+            <li>{{ person.person }} -- {{ person.number_of_votes }} vote{{ person.number_of_votes|pluralize }}</li>
+        {% endfor %}
+        </ul>
+        <h2>{{ winner }}</h2>
+        {% if winner is 'Победитель пока не определен. Голосование продолжается.' %}
+            <a href="{% url 'voting:detail' vote.id %}"><button class="btn btn-warning">Проголосовать еще раз?</button></a>
+<!--        <a href="{% url 'voting:detail' vote.id %}">Проголосовать еще раз?</a>-->
+        {% else %}
+             <a href="{% url 'voting:index' %}"><button class="btn btn-warning">Вернуться к списку голосований</button></a>
+        {% endif %}
+
+    </div>
+{% endblock %}

@@ -1,12 +1,12 @@
 from django.db import transaction
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import F, Max
 
 from datetime import datetime, date
 
-from .models import Person, Vote, VoteToPerson
+from .models import Person, Vote
 
 
 def index(request):
@@ -103,35 +103,3 @@ def determine_the_winner_two(vote: Vote) -> None:
         vote.refresh_from_db()
     return HttpResponseRedirect(reverse('voting:results', args=(vote.id,)))
 
-
-
-
-# def determine_the_winner(vote: Vote, person: Person = None) -> None:
-#     """Функция подсчитывает победителя и записывает результат в БД"""
-#
-#     if person is not None:
-#         if person.number_of_votes == vote.number_of_votes_for_win:
-#             vote.winner = 'Голосование завершено досрочно. Победитель - ' + str(person.person)
-#             vote.save()
-#             vote.refresh_from_db()
-#     else:
-#         if vote.winner == 'Победитель пока не определен. Голосование продолжается.':
-#             selected_vote = vote.vote_to_person.filter(vote=vote.id)
-#             max_score = 0
-#             for selected_person in selected_vote:
-#                 if selected_person.number_of_votes > max_score:
-#                     max_score = selected_person.number_of_votes
-#                     winner = selected_person.person
-#             vote.winner = 'Период голосования закончился. Победитель - ' + str(winner)
-#             vote.save()
-#             vote.refresh_from_db()
-#
-#
-#
-#
-#             # selected_vote = vote.vote_to_person.filter(vote=vote.id)
-#             # selected_person = selected_vote.get(max(selected_vote.number_of_votes))
-#             # vote.winner = 'Победитель - ' + str(Person.objects.get(pk=selected_person.person))
-#             # vote.save()
-#             # vote.refresh_from_db()
-#     return HttpResponseRedirect(reverse('voting:results', args=(vote.id,)))

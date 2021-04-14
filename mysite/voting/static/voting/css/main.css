@@ -1,0 +1,78 @@
+body {
+    background: url("../IMG/background.png");
+    background-size: cover;
+}
+
+body main {
+        text-align: center;
+        color: #fff;
+}
+
+aside {
+    float: left;
+    background: #181818;
+    width: 20%;
+    padding: 2.5%;
+    height: 100vh;
+    color: #fff;
+    border-right: 5px solid #4d4d4d
+}
+
+aside .logo {
+    font-size: 40px;
+    margin-lift: 10 5px;
+    font-weight: bold;
+}
+
+aside ul {list-style: none;}
+
+aside ul li {
+    color: #fff;
+    display: block;
+    margin-top: 20px;
+    transition: transform .4s ease;
+}
+
+aside ul li:hover, aside ul a:hover {
+    color: #eb5959;
+    text-decoration: none;
+    transform: scale(1.05);
+}
+
+main .features {
+    float: left;
+    color: #fff;
+    text-align: center;
+    width: 75%;
+    margin-top: 10px;
+}
+
+main .features h1 {
+    font-size: 50px;
+    text-align: center;
+}
+
+main .features p {
+    400px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+
+.alert-warning {
+    float: left;
+    clear: both;
+    width: 400px;
+    margin: 20px 34%;
+    text-align: left;
+}
+
+.alert-warning h3 {
+    text-align: center;
+}
+
+form {
+    margin-left: 32%;
+    width: 600px;
+    margin-top: 50px;
+}

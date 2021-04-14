@@ -1,12 +1,45 @@
-<h1>{{ vote.voting_name }}</h1>
-<h2>{{ vote.voting_description }}</h2>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% extends 'voting/layout.html' %}
 
-<form action="{% url 'voting:voice' vote.id %}" method="post">
-{% csrf_token %}
-{% for person in person_list %}
-    <input type="radio" name="person" id="person{{ forloop.counter }}" value="{{ person.id }}">
-    <label for="person{{ forloop.counter }}">{{ person }}</label><br>
-{% endfor %}
-<input type="submit" value="Проголосовать!">
-</form>
+{% block title %}{{ vote.voting_name }}{% endblock %}
+
+{% block content %}
+    <div class="features">
+        <h1>{{ vote.voting_name }}</h1>
+        <h2>{{ vote.voting_description }}</h2>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        {% load static %}
+
+        <form action="{% url 'voting:voice' vote.id %}" method="post">
+        {% csrf_token %}
+        {% for person in person_list %}
+            <input type="radio" name="person" id="person{{ forloop.counter }}" value="{{ person.id }}"><h5>{{ person.surname }} {{ person.name }} {{ person.middle_name }}. {{ person.age }} лет.</h5>
+<!--            <label for="person{{ forloop.counter }}">{{ person }}</label><br>-->
+            <h6>{{person.short_biography}}</h6>
+
+
+        {% endfor %}
+<!--            <a href="{% url 'voting:detail' vote.id %}"><button class="btn btn-warning">Проголосовать еще раз?</button></a>-->
+        <input type="submit" button class="btn btn-warning" value="Проголосовать!">
+        </form>
+
+
+    </div>
+{% endblock %}
+
+
+
+
+
+
+<!--<h1>{{ vote.voting_name }}</h1>-->
+<!--<h2>{{ vote.voting_description }}</h2>-->
+<!--{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}-->
+
+<!--<form action="{% url 'voting:voice' vote.id %}" method="post">-->
+<!--{% csrf_token %}-->
+<!--{% for person in person_list %}-->
+<!--    <input type="radio" name="person" id="person{{ forloop.counter }}" value="{{ person.id }}">-->
+<!--    <label for="person{{ forloop.counter }}">{{ person }}</label><br>-->
+<!--{% endfor %}-->
+<!--<input type="submit" value="Проголосовать!">-->
+<!--</form>-->
