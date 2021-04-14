@@ -83,8 +83,8 @@ main .features p {
     text-align: center;
 }
 
-.alert-warning h5 {
-
+ulnamr .alert-warning h5 {
+    font-size: 150%;
     text-align: center;
     color: #DC143C;
 }

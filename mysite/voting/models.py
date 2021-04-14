@@ -33,9 +33,3 @@ class VoteToPerson(models.Model):
     vote = models.ForeignKey(Vote, default=0, on_delete=models.CASCADE, related_name='vote_to_person')
     person = models.ForeignKey(Person, default=0, on_delete=models.CASCADE)
     moment_of_last_voice = models.DateTimeField(default=dt.now())
-
-
-
-
-
-

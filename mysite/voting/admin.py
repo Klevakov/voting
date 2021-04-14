@@ -3,16 +3,6 @@ from django.contrib import admin
 from .models import Person, Vote, VoteToPerson
 
 
-# class PersonInline(admin.StackedInline):
-#     model = Person
-#     extra = 1
-
-
-# class VoteToPersonInline(admin.StackedInline):
-#     model = VoteToPerson
-#     extra = 1
-
-
 class VoteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['voting_name', 'voting_description']}),
@@ -22,8 +12,6 @@ class VoteAdmin(admin.ModelAdmin):
     list_display = ('voting_name', 'start_date', 'end_date', 'winner')
     list_filter = ['start_date']
     search_fields = ['voting_name']
-    # inlines = [PersonInline]
-    # inlines = [VoteToPersonInline]
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -40,5 +28,3 @@ class VoteToPersonAdmin(admin.ModelAdmin):
 admin.site.register(Vote, VoteAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(VoteToPerson, VoteToPersonAdmin)
-
-

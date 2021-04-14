@@ -18,7 +18,7 @@
                     <input type="radio" name="person" id="person{{ forloop.counter }}" value="{{ person.id }}">
                     <h5><img src="{% static person.photo %}" alt=" {{ person }} " class="leftimg" width="100" height="111">
                         {{ person.surname }} {{ person.name }} {{ person.middle_name }}. {{ person.age }} лет.</h5>
-        <!--            <label for="person{{ forloop.counter }}">{{ person }}</label><br>-->
+
                     <h6>{{person.short_biography}}</h6>
                 </div>
 

@@ -12,7 +12,7 @@
     {% for vote in latest_votes_list %}
         <div class="alert-warning">
             <h3><a href="{% url 'voting:detail' vote.id %}">{{ vote.voting_name }}</a></h3>
-<!--            <h3><li><a href="{% url 'voting:detail' vote.id %}">{{ vote.voting_name }}</a></li></h3>-->
+
             <p>{{ vote.voting_description }}</p>
             {% if vote.winner != 'Победитель пока не определен. Голосование продолжается.' %}<h5>{{ vote.winner }}</h5>{% endif %}
         </div>

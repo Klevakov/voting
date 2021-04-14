@@ -9,21 +9,20 @@ from datetime import datetime, date
 from .models import Person, Vote
 
 
-latest_votes_list = Vote.objects.order_by('-id')[:5]
+latest_votes_list = Vote.objects.order_by('-id')[:4]
 
 
 def index(request):
-    latest_votes_list = Vote.objects.order_by('-id')[:5]
+    latest_votes = Vote.objects.order_by('-id')[:4]
     context = {
-        'latest_votes_list': latest_votes_list,
+        'latest_votes_list': latest_votes,
     }
     return render(request, 'voting/index.html', context)
 
 
 def detail(request, vote_id):
     my_vote = get_object_or_404(Vote, pk=vote_id)
-
-    if my_vote.start_date < date.today() <= my_vote.end_date:
+    if my_vote.start_date <= date.today() <= my_vote.end_date:
         if my_vote.winner == 'Победитель пока не определен. Голосование продолжается.':
             my_person_list = my_vote.person.all()
             context = {
@@ -41,7 +40,6 @@ def detail(request, vote_id):
 def results(request, vote_id):
     my_vote = get_object_or_404(Vote, pk=vote_id)
     my_person_list = my_vote.vote_to_person.all()
-
     context = {
         'latest_votes_list': latest_votes_list,
         'vote': my_vote,
@@ -90,22 +88,26 @@ def determine_the_winner_one(vote: Vote, person: Person) -> None:
 
 
 def determine_the_winner_two(vote: Vote) -> None:
+    """Функция выполняет проверку - просчитан ли победитель, и если нет - вычиляет его и записывает результат в БД"""
+
     if vote.winner == 'Победитель пока не определен. Голосование продолжается.':
         selected_vote = vote.vote_to_person.aggregate(Max('number_of_votes'))
-        winners = vote.vote_to_person.filter(number_of_votes=selected_vote['number_of_votes__max'])
-        if winners.count() > 1:
-            current_winner = None
-            for winner in winners:
-                if current_winner is None:
-                    current_winner = winner
-                if winner.moment_of_last_voice < current_winner.moment_of_last_voice:
-                    current_winner = winner
-            vote.winner = 'Период голосования закончился. Победитель  - ' + str(current_winner.person) + \
-                          ' ранее остальных набрал максимальное количество голосов.'
+        if selected_vote['number_of_votes__max'] == 0:
+            vote.winner = 'Период скучного голосования закончился. Ни один участник не получил ни одного голоса.'
         else:
-            current_winner = winners[0]
-            vote.winner = 'Период голосования закончился. Победитель  - ' + str(current_winner.person)
+            winners = vote.vote_to_person.filter(number_of_votes=selected_vote['number_of_votes__max'])
+            if winners.count() > 1:
+                current_winner = None
+                for winner in winners:
+                    if current_winner is None:
+                        current_winner = winner
+                    if winner.moment_of_last_voice < current_winner.moment_of_last_voice:
+                        current_winner = winner
+                vote.winner = 'Период голосования закончился. Победитель  - ' + str(current_winner.person) + \
+                              ' ранее остальных набрал максимальное количество голосов.'
+            else:
+                current_winner = winners[0]
+                vote.winner = 'Период голосования закончился. Победитель  - ' + str(current_winner.person)
         vote.save()
         vote.refresh_from_db()
     return HttpResponseRedirect(reverse('voting:results', args=(vote.id,)))
-
