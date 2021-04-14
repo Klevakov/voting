@@ -9,8 +9,11 @@ from datetime import datetime, date
 from .models import Person, Vote
 
 
+latest_votes_list = Vote.objects.order_by('-id')[:5]
+
+
 def index(request):
-    latest_votes_list = Vote.objects.order_by('-id')[:10]
+    latest_votes_list = Vote.objects.order_by('-id')[:5]
     context = {
         'latest_votes_list': latest_votes_list,
     }
@@ -19,10 +22,12 @@ def index(request):
 
 def detail(request, vote_id):
     my_vote = get_object_or_404(Vote, pk=vote_id)
+
     if my_vote.start_date < date.today() <= my_vote.end_date:
         if my_vote.winner == 'Победитель пока не определен. Голосование продолжается.':
             my_person_list = my_vote.person.all()
             context = {
+                'latest_votes_list': latest_votes_list,
                 'vote': my_vote,
                 'person_list': my_person_list,
             }
@@ -38,6 +43,7 @@ def results(request, vote_id):
     my_person_list = my_vote.vote_to_person.all()
 
     context = {
+        'latest_votes_list': latest_votes_list,
         'vote': my_vote,
         'person_list': my_person_list,
         'winner': my_vote.winner

@@ -12,22 +12,13 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
 </head>
 <body>
-    {% if latest_votes_list %}
     <aside>
-        <img src="{% static 'voting/IMG/golosuy.jpg' %}" alt="брутальный мужик" width="100%">
+        <img src="{% static 'voting/IMG/1.jpg' %}" alt="брутальный мужик" width="100%">
 
 
         <ul>
             <a href="{% url 'voting:index' %}"><li><i class="fas fa-home"></i>К списку голосований</li></a>
 
-            <ulnamr>
-            {% for vote in latest_votes_list %}
-                <li><a href="{% url 'voting:detail' vote.id %}"><li><i class="fas fa-vote-yea"></i>{{ vote.voting_name }}</li></a>
-            {% endfor %}
-            </ulnamr>
-    {% else %}
-            <ulnamr<li>Голосование недоступно.</li></ulnamr>
-    {% endif %}
 
         </ul>
     </aside>
